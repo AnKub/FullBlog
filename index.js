@@ -9,10 +9,23 @@ import UserModel from "./models/User.js";
 
 mongoose
 .connect('mongodb+srv://admin:wwwwww@cluster0.n7ssyno.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
-).then(()=> console.log('DB ok'))
-.catch(()=> console.log('DB error', err));
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(()=> console.log('BASE ON'))
+.catch((err)=> console.log('BASE off', err));
 
+      // Обработка события отключения и переподключения
+mongoose.connection.on('disconnected', () => {
+  console.log('Mongoose disconnected');
+});
 
+mongoose.connection.on('connected', () => {
+  console.log('Mongoose reconnected');
+});
+
+  
 const app = express();
 
 app.use(express.json());
@@ -38,11 +51,23 @@ const passwordHash = await bcrypt.hash(password, salt)
   });
 
   const user = await doc.save();
-  const token = jwt.sign({
-  _id: user._id,
+
+  const token = jwt.sign(
+    {
+    _id: user._id,
+    },
+     'secret123',
+    {
+     expiresIn: '30d',
+    },
+);
+
+   res.json({
+    ...user, 
+    token,
   });
 
-  res.json(user);
+
  } catch (err) {
   console.log(err)
   res.status(500).json({
