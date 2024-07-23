@@ -8,8 +8,8 @@ import UserModel from "./models/User.js";
 
 
 mongoose
-.connect('mongodb+srv://admin:wwwwww@cluster0.n7ssyno.mongodb.net/blog?retryWrites=true&w=majority&appName=Cluster0',
-).then(()=>console.log('DB ok'))
+.connect('mongodb+srv://admin:wwwwww@cluster0.n7ssyno.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
+).then(()=> console.log('DB ok'))
 .catch(()=> console.log('DB error', err));
 
 
@@ -34,13 +34,15 @@ const passwordHash = await bcrypt.hash(password, salt)
     email: req.body.email,
     fullName: req.body.fullName,
     avatarUrl: req.body.avatarUrl,
-    passwordHash: passwordHash,
+    passwordHash,
   });
 
   const user = await doc.save();
+  const token = jwt.sign({
+  _id: user._id,
+  });
 
   res.json(user);
-
  } catch (err) {
   console.log(err)
   res.status(500).json({
