@@ -1,5 +1,21 @@
 import PostModel from '../models/Post.js';
 
+// getTags
+export const getLastTags = async (req, res) => {
+  try {
+    const posts = await PostModel.find().limit(5).exec();
+
+    const tags = posts.map((obj) => obj.tags).flat().slice(0, 5);
+
+    res.json(tags);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: 'Some trouble with GET',
+    });
+  }
+};
+
 // take all posts
 export const getAll = async (req, res) => {
   try {
@@ -8,7 +24,7 @@ export const getAll = async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(500).json({
-      message: 'Что-то пошло не так при получении постов',
+      message: 'Some trouble with GET',
     });
   }
 };

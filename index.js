@@ -53,6 +53,7 @@ app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
 // crud for posts
 
 app.get('/posts', PostController.getAll );
+app.get('/posts/tags', PostController.getLastTags);
 app.get('/posts/:id', PostController.getOne);
 app.post('/posts',checkAuth, postCreateValidation,handleValidationErrors, PostController.create);
 app.delete('/posts/:id',checkAuth, PostController.remove);
