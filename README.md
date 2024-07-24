@@ -76,7 +76,7 @@ npm -v
 1. Clone the repo:
 
    ```sh
-   git clone https://github.com/your_username/your_repository.git
+   git clone https://github.com/AnKub/FullBlog.git
    ```
 
 2. Install NPM packages:
@@ -107,7 +107,7 @@ Contributions are what make the open-source community such an amazing place to l
 
 ## 📞 Contact
 
-Your Name - [your_ankub3088@gmail.com](mailto:your_ankub3088@gmail.com)
+Mail - [your_ankub3088@gmail.com](mailto:your_ankub3088@gmail.com)
 
 Project Link: [https://github.com/AnKub/FullBlog](https://github.com/AnKub/FullBlog)
 
@@ -116,4 +116,3 @@ Project Link: [https://github.com/AnKub/FullBlog](https://github.com/AnKub/FullB
 Distributed under the MIT License. See `LICENSE` for more information.
 ```
 
-Замените `your_username`, `your_repository` и `your_email@example.com` на ваши данные.
