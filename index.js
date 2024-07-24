@@ -52,7 +52,7 @@ app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
 
 // crud for posts
 
-app.get('/tags', PostController.getLastTags);
+// app.get('/tags', PostController.getLastTags);
 
 app.get('/posts', PostController.getAll );
 app.get('/posts/tags', PostController.getLastTags);
