@@ -40,86 +40,86 @@ export const getOne = async (req, res) => {
 };
 
 // delete post
-export const remove = async (req, res) => {
-  try {
-    const postId = req.params.id;
-    const doc = await PostModel.findOneAndDelete({ _id: postId });
+// export const remove = async (req, res) => {
+//   try {
+//     const postId = req.params.id;
+//     const doc = await PostModel.findOneAndDelete({ _id: postId });
 
-    if (!doc) {
-      return res.status(404).json({
-        message: 'Didn’t find post',
-      });
-    }
+//     if (!doc) {
+//       return res.status(404).json({
+//         message: 'Didn’t find post',
+//       });
+//     }
 
-    res.json({
-      success: true,
-    });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({
-      message: 'Something went wrong',
-    });
-  }
-};
+//     res.json({
+//       success: true,
+//     });
+//   } catch (err) {
+//     console.log(err);
+//     res.status(500).json({
+//       message: 'Something went wrong',
+//     });
+//   }
+// };
 
 
-// Создание поста
-export const create = async (req, res) => {
-  try {
-    const doc = new PostModel({
-      title: req.body.title,
-      text: req.body.text,
-      tags: req.body.tags,
-      imageUrl: req.body.imageUrl,
-      user: req.userId,
-    });
+// // Создание поста
+// export const create = async (req, res) => {
+//   try {
+//     const doc = new PostModel({
+//       title: req.body.title,
+//       text: req.body.text,
+//       tags: req.body.tags,
+//       imageUrl: req.body.imageUrl,
+//       user: req.userId,
+//     });
 
-    const post = await doc.save();
-    res.json(post);
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({
-      message: 'Some trouble with create post',
-    });
-  }
-};
+//     const post = await doc.save();
+//     res.json(post);
+//   } catch (err) {
+//     console.log(err);
+//     res.status(500).json({
+//       message: 'Some trouble with create post',
+//     });
+//   }
+// };
 
-// update 
-export const update = async (req, res) => {
-  try {
-    const postId = req.params.id;
+// // update 
+// export const update = async (req, res) => {
+//   try {
+//     const postId = req.params.id;
 
-    // Обновляем документ по id и возвращаем обновлённый документ
-    const updatedPost = await PostModel.findByIdAndUpdate(
-      postId,
-      {
-        title: req.body.title,
-        text: req.body.text,
-        imageUrl: req.body.imageUrl,
-        user: req.userId,  // убедитесь, что req.userId существует и имеет правильное значение
-        tags: req.body.tags,
-      },
-      {
-        new: true,  // возвращаем обновлённый документ
-        runValidators: true,  // проверяем валидность данных перед обновлением
-      }
-    );
+//     // Обновляем документ по id и возвращаем обновлённый документ
+//     const updatedPost = await PostModel.findByIdAndUpdate(
+//       postId,
+//       {
+//         title: req.body.title,
+//         text: req.body.text,
+//         imageUrl: req.body.imageUrl,
+//         user: req.userId,  // убедитесь, что req.userId существует и имеет правильное значение
+//         tags: req.body.tags,
+//       },
+//       {
+//         new: true,  // возвращаем обновлённый документ
+//         runValidators: true,  // проверяем валидность данных перед обновлением
+//       }
+//     );
 
-    if (!updatedPost) {
-      return res.status(404).json({
-        message: 'Post not found',
-      });
-    }
+//     if (!updatedPost) {
+//       return res.status(404).json({
+//         message: 'Post not found',
+//       });
+//     }
 
-    res.json({
-      success: true,
-      post: updatedPost,
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({
-      message: 'Trouble with post update',
-    });
-  }
-};
+//     res.json({
+//       success: true,
+//       post: updatedPost,
+//     });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({
+//       message: 'Trouble with post update',
+//     });
+//   }
+// };
 
