@@ -34,26 +34,39 @@ export const getOne = async (req, res) => {
   try {
     const postId = req.params.id;
 
-    const post = await PostModel.findOneAndUpdate(
-      { _id: postId },
-      { $inc: { viewsCount: 1 } },
-      { returnDocument: 'after', new: true } // `return update doc
-    ).populate('user');
-
-    if (!post) {
+   PostModel.findOneAndUpdate(
+      { 
+        _id: postId 
+      },
+      { $inc: { viewsCount: 1 } 
+      },
+      { 
+        returnDocument: 'after',
+      },
+      (err, doc) =>  {
+      if(err) { 
+        console.log(err);
+        res.status(500).json({
+        message: 'Something went wrong',
+       });
+      }
+      if (!doc) {
       return res.status(404).json({
         message: 'Didnt find post',
       });
     }
-
     res.json(post);
-  } catch (err) {
+  },
+).populate('user');
+
+  }catch(err) {
     console.log(err);
     res.status(500).json({
-      message: 'Something went wrong',
-    });
+    message: 'Something went wrong',
+  });
   }
 };
+
 
 // delete post
 export const remove = async (req, res) => {
