@@ -1,27 +1,26 @@
 import mongoose from "mongoose";
 
-// создаем схему по которой мангоДВ создает поьзователей
+// Создаем схему для пользователей
 const UserSchema = new mongoose.Schema({
   fullName: {
     type: String,
-    required: true,
-    // если свойство обязательное указываем надпись сверху
+    required: true, 
   },
-  email:{
+  email: {
     type: String,
-    required: true,
-    unique: true,
+    required: true, 
+    unique: true,    
   },
   passwordHash: {
     type: String,
-    required: true,
+    required: true,  
   },
-  avatarUrl: String,
-  // если не обязательный, указываем это просто через двоеточие
-},
-{
-  // єто значит что после получения необходимых данных создание сущности должно прекращаться
-timestamps: true,
+  avatarUrl: {
+    type: String,   
+    default: '',     
+  },
+}, {
+  timestamps: true, 
 });
 
 export default mongoose.model("User", UserSchema);

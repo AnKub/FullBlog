@@ -1,35 +1,35 @@
 import mongoose from "mongoose";
 
-// создаем схему по которой мангоДВ создает поьзователей
+// Создаем схему для постов
 const PostSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true,
-    // если свойство обязательное указываем надпись сверху
+    required: true,  // Поле обязательно для заполнения
   },
-  text:{
+  text: {
     type: String,
-    required: true,
-    unique: true,
+    required: true,  // Поле обязательно для заполнения
+   
   },
   tags: {
-    type: Array,
-    rdefault: [],
+    type: [String],  // Используем тип массива строк для тегов
+    default: [],    // Значение по умолчанию — пустой массив
   },
   viewsCount: {
     type: Number,
-    default: 0,
+    default: 0,    // Значение по умолчанию — 0
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true,
+    required: true,  // Поле обязательно для заполнения
   },
-  ImageUrl: String,
- },
-{
-  // єто значит что после получения необходимых данных создание сущности должно прекращаться
-timestamps: true,
+  imageUrl: {
+    type: String,   // Используем camelCase для имени поля
+    default: '',    // Значение по умолчанию — пустая строка
+  },
+}, {
+  timestamps: true,  // Автоматическое добавление полей createdAt и updatedAt
 });
 
 export default mongoose.model("Post", PostSchema);

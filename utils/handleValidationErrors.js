@@ -1,10 +1,18 @@
-import {validationResult} from 'express-validator';
+import { validationResult } from 'express-validator';
 
-
-export default (req, res, next) => {
+const validationMiddleware = (req, res, next) => {
+  // Получаем ошибки валидации из запроса
   const errors = validationResult(req);
-  if(!errors.isEmpty()){
-    return res.status(400).json(errors.array());
+
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      message: 'Validation failed',
+      errors: errors.array()
+    });
   }
+  
   next();
-}
+};
+
+export default validationMiddleware;
+
