@@ -53,23 +53,3 @@ app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
 
 // Роуты для управления постами
 app.get('/tags', PostController.getLastTags);
-app.get('/posts', PostController.getAll);
-app.get('/posts/tags', PostController.getLastTags);
-app.get('/posts/:id', PostController.getOne);
-app.post('/posts', checkAuth, postCreateValidation, handleValidationErrors, PostController.create);
-app.delete('/posts/:id', checkAuth, PostController.remove);
-app.patch('/posts/:id', checkAuth, postCreateValidation, handleValidationErrors, PostController.update);
-
-// Обработка ошибок (универсальный обработчик ошибок)
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: 'Internal Server Error' });
-});
-
-// Запуск сервера
-app.listen(4444, (err) => {
-  if (err) {
-    return console.error('Failed to start server:', err);
-  }
-  console.log('Server is running on port 4444');
-});
