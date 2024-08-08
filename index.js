@@ -26,17 +26,20 @@ const app = express();
 // Настройка multer для загрузки файлов
 const storage = multer.diskStorage({
   destination: (_, __, cb) => {
-    cb(null, 'uploads');
+    cb(null, 'uploads'); // Папка для хранения загруженных файлов
   },
   filename: (_, file, cb) => {
-    cb(null, file.originalname);
+    cb(null, file.originalname); // Сохранение оригинального имени файла
   },
 });
 
 const upload = multer({ storage });
 
+// Middleware для обработки JSON и CORS
 app.use(express.json());
 app.use(cors());
+
+// Статическая папка для загрузок
 app.use('/uploads', express.static('uploads'));
 
 // Роуты для аутентификации
@@ -46,6 +49,7 @@ app.get('/auth/me', checkAuth, UserController.getMe);
 
 // Роут для загрузки файлов
 app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
+  // Возвращаем URL загруженного файла
   res.json({
     url: `/uploads/${req.file.originalname}`,
   });

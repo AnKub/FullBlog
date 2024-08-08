@@ -132,16 +132,13 @@ export const getOne = async (req, res) => {
 export const remove = async (req, res) => {
   try {
     const postId = req.params.id;
-    const doc = await PostModel.findOneAndDelete({ _id: postId });
 
-    if (!doc) {
-      return res.status(404).json({ message: 'Didn’t find post' });
-    }
+    await PostModel.findOneAndDelete({ _id: postId });
 
     res.json({ success: true });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ message: 'Something went wrong' });
+    res.status(500).json({ message: 'Some trouble with remove post' });
   }
 };
 
@@ -149,10 +146,13 @@ export const create = async (req, res) => {
   try {
     const { title, text, tags, imageUrl } = req.body;
 
+    // Разделение тегов на массив
+    const tagsArray = tags ? tags.split(',').map(tag => tag.trim()) : [];
+
     const doc = new PostModel({
       title,
       text,
-      tags: tags.split(','),
+      tags: tagsArray, // Передача массива тегов
       imageUrl,
       user: req.userId,
     });
@@ -170,9 +170,12 @@ export const update = async (req, res) => {
     const postId = req.params.id;
     const { title, text, imageUrl, tags } = req.body;
 
+    // Разделение тегов на массив
+    const tagsArray = tags ? tags.split(',').map(tag => tag.trim()) : [];
+
     const updatedPost = await PostModel.findByIdAndUpdate(
       postId,
-      { title, text, imageUrl, user: req.userId, tags: tags.split(',') },
+      { title, text, imageUrl, user: req.userId, tags: tagsArray },
       { new: true, runValidators: true }
     );
 
