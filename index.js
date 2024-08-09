@@ -29,7 +29,8 @@ const storage = multer.diskStorage({
     cb(null, 'uploads'); // Папка для хранения загруженных файлов
   },
   filename: (_, file, cb) => {
-    cb(null, file.originalname); // Сохранение оригинального имени файла
+    // Добавляем текущую дату и время к имени файла для уникальности
+    cb(null, Date.now() + '-' + file.originalname);
   },
 });
 
@@ -49,9 +50,14 @@ app.get('/auth/me', checkAuth, UserController.getMe);
 
 // Роут для загрузки файлов
 app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
+  // Проверяем, что файл был загружен
+  if (!req.file) {
+    return res.status(400).json({ message: 'No file uploaded' });
+  }
+
   // Возвращаем URL загруженного файла
   res.json({
-    url: `/uploads/${req.file.originalname}`,
+    url: `/uploads/${req.file.filename}`, // Используем filename, чтобы соответствовать имени файла
   });
 });
 

@@ -8,17 +8,23 @@ import PostModel from '../models/Post.js';
 export const register = async (req, res) => {
   try {
     const { email, fullName, avatarUrl, password } = req.body;
+
+    // Проверка на обязательные поля
+    if (!email || !fullName || !password) {
+      return res.status(400).json({ message: 'Email, full name, and password are required' });
+    }
+
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);
 
-    const doc = new UserModel({
+    const user = new UserModel({
       email,
       fullName,
       avatarUrl,
       passwordHash: hash,
     });
 
-    const user = await doc.save();
+    await user.save();
 
     const token = jwt.sign(
       { _id: user._id },
@@ -30,22 +36,27 @@ export const register = async (req, res) => {
 
     res.json({ ...userData, token });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: 'Houston, we have a problem' });
+    console.error(err);
+    res.status(500).json({ message: 'Registration failed' });
   }
 };
 
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
+    }
+
     const user = await UserModel.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: 'User not found' });
     }
 
-    const isValidPass = await bcrypt.compare(password, user._doc.passwordHash);
+    const isValidPass = await bcrypt.compare(password, user.passwordHash);
     if (!isValidPass) {
-      return res.status(400).json({ message: 'Incorrect login or password' });
+      return res.status(400).json({ message: 'Invalid credentials' });
     }
 
     const token = jwt.sign(
@@ -58,8 +69,8 @@ export const login = async (req, res) => {
 
     res.json({ ...userData, token });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: 'Something went wrong' });
+    console.error(err);
+    res.status(500).json({ message: 'Login failed' });
   }
 };
 
@@ -74,8 +85,8 @@ export const getMe = async (req, res) => {
 
     res.json(userData);
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: 'No access' });
+    console.error(err);
+    res.status(500).json({ message: 'Access denied' });
   }
 };
 
@@ -84,12 +95,12 @@ export const getMe = async (req, res) => {
 export const getLastTags = async (req, res) => {
   try {
     const posts = await PostModel.find().limit(5).exec();
-    const tags = [...new Set(posts.map((obj) => obj.tags).flat())].slice(0, 5);
+    const tags = [...new Set(posts.flatMap(post => post.tags))].slice(0, 5);
 
     res.json(tags);
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: 'Some trouble with GET' });
+    console.error(err);
+    res.status(500).json({ message: 'Error fetching tags' });
   }
 };
 
@@ -101,10 +112,11 @@ export const getAll = async (req, res) => {
       .skip((page - 1) * limit)
       .limit(Number(limit))
       .exec();
+
     res.json(posts);
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: 'Some trouble with GET' });
+    console.error(err);
+    res.status(500).json({ message: 'Error fetching posts' });
   }
 };
 
@@ -112,20 +124,20 @@ export const getOne = async (req, res) => {
   try {
     const postId = req.params.id;
 
-    const post = await PostModel.findOneAndUpdate(
-      { _id: postId },
+    const post = await PostModel.findByIdAndUpdate(
+      postId,
       { $inc: { viewsCount: 1 } },
       { new: true, runValidators: true }
     ).populate('user');
 
     if (!post) {
-      return res.status(404).json({ message: 'Didn’t find post' });
+      return res.status(404).json({ message: 'Post not found' });
     }
 
     res.json(post);
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: 'Something went wrong' });
+    console.error(err);
+    res.status(500).json({ message: 'Error fetching post' });
   }
 };
 
@@ -133,12 +145,16 @@ export const remove = async (req, res) => {
   try {
     const postId = req.params.id;
 
-    await PostModel.findOneAndDelete({ _id: postId });
+    const result = await PostModel.findByIdAndDelete(postId);
+
+    if (!result) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
 
     res.json({ success: true });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: 'Some trouble with remove post' });
+    console.error(err);
+    res.status(500).json({ message: 'Error removing post' });
   }
 };
 
@@ -146,22 +162,27 @@ export const create = async (req, res) => {
   try {
     const { title, text, tags, imageUrl } = req.body;
 
-    // Разделение тегов на массив
-    const tagsArray = tags ? tags.split(',').map(tag => tag.trim()) : [];
+    // Проверка на обязательные поля
+    if (!title || !text) {
+      return res.status(400).json({ message: 'Title and text are required' });
+    }
 
-    const doc = new PostModel({
+    // Убедимся, что tags - это массив строк
+    const tagsArray = Array.isArray(tags) ? tags : [];
+
+    const post = new PostModel({
       title,
       text,
-      tags: tagsArray, // Передача массива тегов
+      tags: tagsArray,
       imageUrl,
       user: req.userId,
     });
 
-    const post = await doc.save();
+    await post.save();
     res.json(post);
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: 'Some trouble with create post' });
+    console.error(err);
+    res.status(500).json({ message: 'Error creating post' });
   }
 };
 
@@ -170,8 +191,13 @@ export const update = async (req, res) => {
     const postId = req.params.id;
     const { title, text, imageUrl, tags } = req.body;
 
-    // Разделение тегов на массив
-    const tagsArray = tags ? tags.split(',').map(tag => tag.trim()) : [];
+    // Проверка на обязательные поля
+    if (!title || !text) {
+      return res.status(400).json({ message: 'Title and text are required' });
+    }
+
+    // Убедимся, что tags - это массив строк
+    const tagsArray = Array.isArray(tags) ? tags : [];
 
     const updatedPost = await PostModel.findByIdAndUpdate(
       postId,
@@ -186,6 +212,6 @@ export const update = async (req, res) => {
     res.json({ success: true, post: updatedPost });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Trouble with post update' });
+    res.status(500).json({ message: 'Error updating post' });
   }
 };
