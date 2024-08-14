@@ -38,7 +38,12 @@ const upload = multer({ storage });
 
 // Middleware для обработки JSON и CORS
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000', // Замените на адрес вашего клиентского приложения
+  credentials: true, // Если используете куки для аутентификации
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], // Методы, которые могут быть использованы в запросах
+  allowedHeaders: ['Content-Type', 'Authorization'], // Разрешенные заголовки в запросах
+}));
 
 // Статическая папка для загрузок
 app.use('/uploads', express.static('uploads'));

@@ -35,8 +35,8 @@ export const postCreateValidation = [
       }
       return true;
     }),
-  body('imageUrl')
+    body('imageUrl')
     .optional()
-    .isURL().withMessage('Invalid image URL'),
+    .isString().withMessage('Invalid image URL'),
 ];
 
