@@ -1,111 +1,69 @@
-# 📖 Blog Backend
+# 🖥️ React Blog Backend
 
-This project is a backend for a blog web page. It is built using the following tools and technologies:
+## 🚀 Project Overview
+This is the backend part of the full blog application, built using Node.js and Express. It manages authentication, CRUD operations for posts, and file uploads.
 
-## 🛠 Tools and Technologies
+## 📌 Key Technologies
+- 🚀 **Node.js & Express** – Backend framework
+- 🔒 **JWT (jsonwebtoken)** – User authentication
+- 🛡️ **Express Validator** – Input validation
+- 🔄 **Mongoose** – MongoDB object modeling
+- 🔑 **bcrypt** – Password hashing
+- 🌍 **CORS** – Cross-origin resource sharing
+- 📂 **Multer** – File uploads
 
-- **Node.js and Express**: The main platform for creating the server and handling HTTP requests.
-- **Mongoose**: A library for working with MongoDB, used to create data models and interact with the database.
-- **Nodemon**: A tool for automatically restarting the server when changes are made to the code.
-- **body-parser**: Middleware for parsing the request body, necessary for processing JSON and URL-encoded data.
-- **JWT**: Used for user authentication.
-
-## 🔧 Methods Used
-
-- **CRUD Operations**: Implementing functions to create, read, update, and delete posts.
-- **Asynchronous Functions**: Using async/await to handle asynchronous operations.
-- **Error Handling**: Logging and handling errors to ensure reliability.
-
-## 📋 Example Code
-
-Here is an example method for updating a post:
-
-```javascript
-export const update = async (req, res) => {
-  try {
-    const postId = req.params.id;
-    const updatedPost = await PostModel.findByIdAndUpdate(
-      postId,
-      {
-        title: req.body.title,
-        text: req.body.text,
-        imageUrl: req.body.imageUrl,
-        user: req.userId,
-        tags: req.body.tags,
-      },
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
-
-    if (!updatedPost) {
-      return res.status(404).json({
-        message: 'Post not found',
-      });
-    }
-
-    res.json({
-      success: true,
-      post: updatedPost,
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({
-      message: 'Trouble with post update',
-    });
-  }
-};
+## 📂 Project Structure
+```plaintext
+📦 fullblog
+ ┣ 📂 controllers    # Business logic
+ ┣ 📂 models         # Mongoose schemas
+ ┣ 📂 routes         # API endpoints
+ ┣ 📂 middleware     # Authentication and validation
+ ┣ 📂 uploads        # Uploaded files (if applicable)
+ ┣ 📜 index.js       # Entry point
+ ┣ 📜 package.json   # Project configuration
+ ┗ 📜 README.md      # Documentation
 ```
 
-## 🚀 Getting Started
-
-To get a local copy up and running follow these simple steps.
-
-### Prerequisites
-
-Make sure you have Node.js and npm installed:
-
-```sh
-node -v
-npm -v
-```
-
-### Installation
-
-1. Clone the repo:
-
-   ```sh
-   git clone https://github.com/AnKub/FullBlog.git
-   ```
-
-2. Install NPM packages:
-
+## 🛠 Getting Started
+1. Install dependencies:
    ```sh
    npm install
    ```
+2. Start the server in development mode:
+   ```sh
+   npm run start:dev
+   ```
+3. Start the server in production mode:
+   ```sh
+   npm start
+   ```
 
-3. Create a `.env` file and configure your environment variables.
+## 📡 API Endpoints
+- **Auth**
+  - `POST /auth/register` – User registration
+  - `POST /auth/login` – User login
+  - `GET /auth/me` – Get current user info
 
-### Usage
+- **Posts**
+  - `GET /posts` – Fetch all posts
+  - `GET /posts/:id` – Fetch single post
+  - `POST /posts` – Create a post
+  - `PATCH /posts/:id` – Update a post
+  - `DELETE /posts/:id` – Delete a post
 
-To start the server:
+- **File Upload**
+  - `POST /upload` – Upload an image
 
-```sh
-npm run dev
-```
+## 🔑 Authentication & Security
+- Uses **JWT tokens** for user authentication.
+- Passwords are hashed using **bcrypt**.
+- Input data is validated using **express-validator**.
 
-## 🤝 Contributing
+## 🗂 Database
+- Uses **MongoDB** with **Mongoose** for schema modeling.
+- Ensure MongoDB is running before starting the server.
 
-Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-
-
-
+## 📜 License
+This project is open-source. Feel free to use and modify! ✨
 
